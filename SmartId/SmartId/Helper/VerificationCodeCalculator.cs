@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace SmartId.Helper
 {
@@ -11,14 +10,24 @@ namespace SmartId.Helper
         /// Generates randomly generated hash in Base64 fromat
         /// </summary>
         /// <returns>randomly generated hash in Base64 fromat</returns>
-        public static string GenerateRandomSHA512()
+        public static byte[] GenerateRandomSHA512()
         {
             using (SHA512 sha512 = SHA512.Create())
             {
                 byte[] bytes = GetRandomBytes();
-                byte[] hash = sha512.ComputeHash(bytes);
-                return Convert.ToBase64String(hash);
+                return sha512.ComputeHash(bytes);
+
             }
+        }
+
+        /// <summary>
+        /// Converts byte array to base64 string
+        /// </summary>
+        /// <param name="hash"></param>
+        /// <returns></returns>
+        public static string ToBase64String(byte[] hash)
+        {
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>
@@ -42,14 +51,13 @@ namespace SmartId.Helper
         /// </summary>
         /// <param name="hash"></param>
         /// <returns>Verification code</returns>
-        public static string CalculateVerificationCode(string hash)
+        public static string CalculateVerificationCode(byte[] hash)
         {
             //integer(SHA256(hash)[−2:−1]) mod 10000
             using (SHA256 sha256 = SHA256.Create())
             {
-                byte[] bytes = Encoding.UTF8.GetBytes(hash);
                 //where we take SHA256 result
-                var sha256Result = sha256.ComputeHash(bytes);
+                var sha256Result = sha256.ComputeHash(hash);
                 Array.Reverse(sha256Result);
                 //extract 2 rightmost bytes from it,
                 var twoRightmostBytes = sha256Result.Take(2).Reverse().ToArray();
