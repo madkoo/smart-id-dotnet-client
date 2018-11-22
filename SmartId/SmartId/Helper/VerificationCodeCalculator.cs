@@ -58,12 +58,11 @@ namespace SmartId.Helper
             {
                 //where we take SHA256 result
                 var sha256Result = sha256.ComputeHash(hash);
-                Array.Reverse(sha256Result);
                 //extract 2 rightmost bytes from it,
-                var twoRightmostBytes = sha256Result.Take(2).Reverse().ToArray();
+                var twoRightmostBytes = sha256Result.Reverse().Take(2).ToArray();
 
                 //interpret them as a big - endian unsigned integer
-                ushort positiveInteger = BitConverter.ToUInt16(twoRightmostBytes.Reverse().ToArray(), 0);
+                ushort positiveInteger = BitConverter.ToUInt16(twoRightmostBytes, 0);
 
                 //Take 4 last digits
                 return positiveInteger.ToString().GetLast(4);
